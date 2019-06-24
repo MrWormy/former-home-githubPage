@@ -7,6 +7,11 @@
       "src": "apple-touch-icon.png",
       "sizes": "93x95",
       "type": "image/png"
+    },
+    {
+      "src": "public/icon144.png",
+      "sizes": "144x144",
+      "type": "image/png"
     }
   ],
   "name": "BOIRE & CO",
