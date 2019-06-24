@@ -4,6 +4,7 @@ self.addEventListener('install', function(event) {
             return cache.addAll([
                 '/',
                 '/index.html',
+                '/manifest.webmanifest',
                 '/apple-touch-icon.png',
                 '/favicon.ico',
                 '/public/style.css',
