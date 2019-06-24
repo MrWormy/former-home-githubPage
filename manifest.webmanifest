@@ -1,0 +1,15 @@
+{
+  "background_color": "pink",
+  "description": "Il faut boire !",
+  "display": "fullscreen",
+  "icons": [
+    {
+      "src": "apple-touch-icon.png",
+      "sizes": "93x95",
+      "type": "image/png"
+    }
+  ],
+  "name": "BOIRE & CO",
+  "short_name": "BOIRE & CO",
+  "start_url": "/index.html"
+}
