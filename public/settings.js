@@ -53,6 +53,36 @@ const settingFieldConfig = {
     }
 };
 
+const THUMBNAIL_DIMENSION = 144;
+
+function setTransformation(ctx, o, width = THUMBNAIL_DIMENSION, height = THUMBNAIL_DIMENSION) {
+    switch (o) {
+        case 2:
+            ctx.setTransform(-1, 0, 0, 1, width, 0);
+            break;
+        case 3:
+            ctx.setTransform(-1, 0, 0, -1, width, height);
+            break;
+        case 4:
+            ctx.setTransform(1, 0, 0, -1, 0, height);
+            break;
+        case 5:
+            ctx.setTransform(0, 1, 1, 0, 0, 0);
+            break;
+        case 6:
+            ctx.setTransform(0, 1, -1, 0, height, 0);
+            break;
+        case 7:
+            ctx.setTransform(0, -1, -1, 0, height, width);
+            break;
+        case 8:
+            ctx.setTransform(0, -1, 1, 0, 0, width);
+            break;
+        default:
+            break;
+    }
+}
+
 function getSettings() {
     const settings = localStorage.getItem('settings');
     try {
@@ -92,11 +122,11 @@ function getOrientation(file, callback) {
                     return callback(-1);
                 }
 
-                var little = view.getUint16(offset += 6, false) === 0x4949;
+                const little = view.getUint16(offset += 6, false) === 0x4949;
                 offset += view.getUint32(offset + 4, little);
-                var tags = view.getUint16(offset, little);
+                const tags = view.getUint16(offset, little);
                 offset += 2;
-                for (var i = 0; i < tags; i++)
+                for (let i = 0; i < tags; i++)
                 {
                     if (view.getUint16(offset + (i * 12), little) === 0x0112)
                     {
@@ -118,27 +148,30 @@ function getOrientation(file, callback) {
     reader.readAsArrayBuffer(file);
 }
 
-function resize(tm, e) {
+function resize(tm, o, e) {
     const c = document.createElement('canvas');
-    c.width = 144;
-    c.height = 144;
+    c.width = THUMBNAIL_DIMENSION;
+    c.height = THUMBNAIL_DIMENSION;
     const ctx = c.getContext('2d');
-    ctx.drawImage(e.target, 0, 0, e.target.width, e.target.height, 0, 0, 144, 144);
+    setTransformation(ctx, o, THUMBNAIL_DIMENSION, THUMBNAIL_DIMENSION);
+    ctx.drawImage(e.target, 0, 0, e.target.width, e.target.height, 0, 0, THUMBNAIL_DIMENSION, THUMBNAIL_DIMENSION);
+    ctx.setTransform(1,0,0,1,0,0);
     tm.src = c.toDataURL('image/jpeg', 0.92);
 }
 
 function newThumbnail (tmb, e) {
     if (e.target.files[0]) {
-        const fr = new FileReader();
-        const pr = new Image();
-        getOrientation(e.target.files[0],o => alert(o));
+        getOrientation(e.target.files[0],(o) => {
+            const fr = new FileReader();
+            const pr = new Image();
 
-        fr.addEventListener('load', function () {
-            pr.addEventListener('load', resize.bind(null, tmb), false);
-            pr.src = fr.result;
-        }, false);
+            fr.addEventListener('load', function () {
+                pr.addEventListener('load', resize.bind(null, tmb, o), false);
+                pr.src = fr.result;
+            }, false);
 
-        fr.readAsDataURL(e.target.files[0]);
+            fr.readAsDataURL(e.target.files[0]);
+        });
     }
 }
 
