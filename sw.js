@@ -8,6 +8,9 @@ self.addEventListener('install', function(event) {
                 './apple-touch-icon.png',
                 './favicon.ico',
                 './public/style.css',
+                './public/settings.html',
+                './public/settings.css',
+                './public/settings.js',
                 './public/app.js',
                 './public/loading.png',
                 './public/icon144.png'
@@ -17,7 +20,7 @@ self.addEventListener('install', function(event) {
 });
 
 self.addEventListener('fetch', function(event) {
-    event.respondWith(caches.match(event.request).then(function(response) {
+    event.respondWith(caches.match(event.request, { ignoreSearch: true }).then(function(response) {
         // caches.match() always resolves
         // but in case of success response will have value
         if (response !== undefined) {
