@@ -79,13 +79,14 @@ function svgLine(x1, y1, x2, y2, stroke = 'black', strokeWidth = '14') {
     return line;
 }
 
-function createAddElement(parent, element) {
+function createAddElement(parent, element, config) {
     const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
     svg.setAttribute('width', '144');
     svg.setAttribute('height', '144');
     svg.appendChild(svgLine(20,72,124,72));
     svg.appendChild(svgLine(72,20,72,124));
     svg.addEventListener('click', addOneToDaily.bind(null, element), false);
+    svg.style.backgroundColor = (config.currentObjective >= config.dailyObjective) ? 'green' : 'red';
     parent.appendChild(svg);
 }
 
@@ -103,7 +104,7 @@ function loadContent(elements) {
         const parent = document.createElement('div');
         if (elements.hasOwnProperty(element)) {
             loadElementPicture(parent, elements[element]);
-            createAddElement(parent, element);
+            createAddElement(parent, element, elements[element]);
         }
         content.appendChild(parent);
     }
