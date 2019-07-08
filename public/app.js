@@ -18,6 +18,24 @@ if ('serviceWorker' in navigator) {
     });
 }
 
+function getSettings() {
+    const settings = localStorage.getItem('settings');
+    try {
+        return JSON.parse(settings);
+    } catch (e) {
+        console.error(e);
+        return null;
+    }
+}
+
+function setSettings(settings) {
+    try {
+        localStorage.setItem('settings', JSON.stringify(settings));
+    } catch (e) {
+        console.error(e);
+    }
+}
+
 function resetSettings() {
     localStorage.setItem('settings', JSON.stringify(DEFAULT_SETTINGS));
     return JSON.parse(localStorage.getItem('settings'));
@@ -36,11 +54,72 @@ function loadSetting() {
 
 }
 
-const els = loadSetting();
+function addOneToDaily(element) {
+    const set = getSettings();
 
-for (let item in els) {
-    const picture = new Image();
-    picture.src = els[item].picture;
-    document.body.appendChild(picture);
+    if (set.hasOwnProperty(element)) {
+        const co = set[element].currentObjective;
+        set[element].currentObjective = (co) ? co + 1 : 1;
+        setSettings(set);
+        loadPage();
+    } else {
+        console.warn(`trying to update unknown element ${element}`);
+    }
 }
 
+function svgLine(x1, y1, x2, y2, stroke = 'black', strokeWidth = '14') {
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', x1);
+    line.setAttribute('x2', x2);
+    line.setAttribute('y1', y1);
+    line.setAttribute('y2', y2);
+    line.setAttribute('stroke', stroke);
+    line.setAttribute('stroke-width', strokeWidth);
+
+    return line;
+}
+
+function createAddElement(parent, element) {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+    svg.setAttribute('width', '144');
+    svg.setAttribute('height', '144');
+    svg.appendChild(svgLine(20,72,124,72));
+    svg.appendChild(svgLine(72,20,72,124));
+    svg.addEventListener('click', addOneToDaily.bind(null, element), false);
+    parent.appendChild(svg);
+}
+
+function loadElementPicture(parent, element) {
+    for (let i = 0; i < (element.currentObjective || 0); i++) {
+        const eltPicture = new Image();
+        eltPicture.src = element.picture;
+        parent.appendChild(eltPicture);
+    }
+}
+
+function loadContent(elements) {
+    const content = document.getElementById('content');
+    for (let element in elements) {
+        const parent = document.createElement('div');
+        if (elements.hasOwnProperty(element)) {
+            loadElementPicture(parent, elements[element]);
+            createAddElement(parent, element);
+        }
+        content.appendChild(parent);
+    }
+}
+
+function clearElement (el) {
+    let child;
+    while ((child = el.firstChild) !== null) {
+        el.removeChild(child);
+    }
+}
+
+function loadPage() {
+    clearElement(document.getElementById('content'));
+    const els = loadSetting();
+    loadContent(els);
+}
+
+loadPage();

@@ -26,6 +26,7 @@ const settingFieldConfig = {
         type: 'input',
         valueField: 'value',
         hasLabel: true,
+        isInt: true,
         properties: {
             type: 'number',
             value: '#value'
@@ -36,6 +37,7 @@ const settingFieldConfig = {
         type: 'input',
         valueField: 'value',
         hasLabel: true,
+        isInt: true,
         properties: {
             type: 'number',
             value: '#value'
@@ -205,7 +207,8 @@ function getSettingsValues(name) {
     const ret = {};
     Array.prototype.forEach.call(settings, (setting) => {
         const settingName = setting.id.split('-')[1];
-        ret[settingName] = setting[settingFieldConfig[settingName].valueField];
+        const setVal = setting[settingFieldConfig[settingName].valueField];
+        ret[settingName] = settingFieldConfig[settingName].isInt ? parseInt(setVal) || 0 : setVal;
     });
     return ret;
 }
@@ -221,11 +224,11 @@ function updateSetting(name) {
 
 function deleteSetting(name) {
     const currentSettings = getSettings();
-    if (currentSettings.hasOwnProperty(name)) {
-        delete currentSettings[name];
-        setSettings(currentSettings);
-        document.getElementById('settings').removeChild(document.getElementById(`setting-${name}-container`));
-    }
+    // if (currentSettings.hasOwnProperty(name)) {
+    //     delete currentSettings[name];
+    //     setSettings(currentSettings);
+    //     document.getElementById('settings').removeChild(document.getElementById(`setting-${name}-container`));
+    // }
 }
 
 function populateElementFromSetting (element, settingValue, properties) {
