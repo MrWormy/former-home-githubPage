@@ -4,7 +4,7 @@
   "display": "fullscreen",
   "icons": [
     {
-      "src": "apple-touch-icon.png",
+      "src": "public/apple-touch-icon.png",
       "sizes": "93x95",
       "type": "image/png"
     },
