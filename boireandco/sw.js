@@ -3,17 +3,17 @@ self.addEventListener('install', function(event) {
         caches.open('applicationCache').then(function(cache) {
             return cache.addAll([
                 './',
-                './index.html',
-                './manifest.webmanifest',
-                './apple-touch-icon.png',
-                './favicon.ico',
-                './public/style.css',
-                './public/settings.html',
-                './public/settings.css',
-                './public/settings.js',
-                './public/app.js',
-                './public/loading.png',
-                './public/icon144.png'
+                'index.html',
+                'manifest.webmanifest',
+                'apple-touch-icon.png',
+                'favicon.ico',
+                'public/style.css',
+                'public/settings.html',
+                'public/settings.css',
+                'public/settings.js',
+                'public/app.js',
+                'public/loading.png',
+                'public/icon144.png'
             ]);
         })
     );

@@ -4,17 +4,17 @@
   "display": "fullscreen",
   "icons": [
     {
-      "src": "./apple-touch-icon.png",
+      "src": "apple-touch-icon.png",
       "sizes": "93x95",
       "type": "image/png"
     },
     {
-      "src": "./public/icon144.png",
+      "src": "public/icon144.png",
       "sizes": "144x144",
       "type": "image/png"
     }
   ],
   "name": "BOIRE & CO",
   "short_name": "BOIRE & CO",
-  "start_url": "./index.html"
+  "start_url": "index.html"
 }
