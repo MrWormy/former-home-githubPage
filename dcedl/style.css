@@ -1,0 +1,12 @@
+.dsp-bck {
+    display: block;
+}
+
+.dsp-hdn {
+    display: none;
+}
+
+.game-content {
+    padding: 5px;
+    white-space: pre-line;
+}
