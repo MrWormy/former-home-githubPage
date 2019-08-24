@@ -1,5 +1,7 @@
 (function(win) {
-    const words = Object.keys(dlSet);
+    const words = Object.keys(dlSet).sort().sort((a, b) => {
+        return b.length - a.length;
+    });
 
     function isDoable(word, draw) {
         const d = draw.slice(0);
@@ -14,18 +16,17 @@
     }
 
     function computeMaxAvail(words, draw, numWord = 3) {
-        let maxLength = 0;
         let maxWords = [];
 
-        words.forEach((word) => {
-            if (word.length >= maxLength) {
-                if (isDoable(word, draw)) {
-                    maxLength = word.length;
-                    maxWords.unshift(dlSet[word]);
-                    if (maxWords.length > numWord) maxWords.pop();
+        for (let i = 0, len = words.length; i < len; i++) {
+            const word = words[i];
+            if (isDoable(word, draw)) {
+                maxWords.push(`${dlSet[word]} (${word.length})`);
+                if (maxWords.length >= numWord) {
+                    break;
                 }
             }
-        });
+        }
 
         return maxWords;
     }

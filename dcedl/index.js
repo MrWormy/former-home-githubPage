@@ -94,7 +94,7 @@
         gameTimer = setTimeout(() => {
             if (Array.isArray(gameState)) {
                 const s = win.dlMaxAvail(gameState);
-                dlContent.appendChild(document.createTextNode(`\n\nRéponses : ${s.map(el => `${el} (${el.length})`).join(', ')}`));
+                dlContent.appendChild(document.createTextNode(`\n\nRéponses : ${s.join(', ')}`));
             }
         }, 30000);
     }
