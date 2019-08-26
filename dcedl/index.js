@@ -37,6 +37,55 @@
     });
 
     // Games logic
+    function generateTile(str) {
+        const sp = document.createElement('span');
+        const text = document.createTextNode(String(str).toUpperCase());
+
+        sp.appendChild(text);
+        return sp;
+    }
+
+    function generateDraw() {
+        const draw = document.createElement('div');
+        draw.className = 'game-draw';
+
+        return draw;
+    }
+
+    function generateAnswer(str) {
+        const d = document.createElement('div');
+        d.className = 'game-answer';
+        d.appendChild(document.createTextNode(str));
+
+        return d;
+    }
+
+    /**
+     <div class="horloge">
+         <div class="static-back-horloge"></div>
+         <div class="back-horloge"></div>
+         <div class="front-horloge"></div>
+     </div>
+     */
+
+    function spawnTimer() {
+        const timer = document.createElement('div');
+        const staticBack = document.createElement('div');
+        const movingBack = document.createElement('div');
+        const hidingFront = document.createElement('div');
+
+        timer.className = 'horloge';
+        staticBack.className = 'static-back-horloge';
+        movingBack.className = 'back-horloge';
+        hidingFront.className = 'front-horloge';
+
+        timer.appendChild(staticBack);
+        timer.appendChild(movingBack);
+        timer.appendChild(hidingFront);
+
+        return timer;
+    }
+
     // dc
     const dcLaunch = document.getElementById('dc-launch');
     const dcContent = document.getElementById('dc-content');
@@ -46,13 +95,20 @@
         const g = win.dcInit();
         gameContent = dcContent;
         clearGame();
-        dcContent.appendChild(document.createTextNode(`${g.draw.join(', ')} looking for ${g.target}\n\n`));
+        const draw = generateDraw();
+        for(const num of g.draw) {
+            draw.appendChild(generateTile(num));
+        }
+        draw.appendChild(generateTile('►'));
+        draw.appendChild(generateTile(g.target));
+        draw.appendChild(spawnTimer());
+        dcContent.appendChild(draw);
         gameTimer = setTimeout(() => {
-            dcContent.appendChild(document.createTextNode(`${s.solution}\n`));
+            dcContent.appendChild(generateAnswer(`${s.solution}`));
         }, 30000);
         setTimeout(() => {
             s = win.dcSolve(g);
-        });
+        }, 40);
     }
 
     dcLaunch.addEventListener('click', startDC, false);
@@ -69,7 +125,7 @@
             if(gameState.length < 10) {
                 const l = win.dlLetter(type);
                 gameState.push(l);
-                dlContent.appendChild(document.createTextNode(`, ${l}`));
+                dlContent.firstChild.appendChild(generateTile(l));
                 if (gameState.length === 10 && !gameTimer) {
                     startDL();
                 }
@@ -77,7 +133,9 @@
         } else {
             const l = win.dlLetter(type);
             gameState = [l];
-            dlContent.appendChild(document.createTextNode(l));
+            const draw = generateDraw();
+            draw.appendChild(generateTile(l));
+            dlContent.appendChild(draw);
         }
     }
 
@@ -85,20 +143,24 @@
         gameContent = dlContent;
         clearGame();
         gameState = win.dlDraw();
-        dlContent.appendChild(document.createTextNode(gameState.join(', ')));
+        const draw = generateDraw();
+        for (const letter of gameState) {
+            draw.appendChild(generateTile(letter));
+        }
+        dlContent.appendChild(draw);
         startDL();
     }
 
     function startDL() {
         clearTimeout(gameTimer);
+        dlContent.firstChild.appendChild(spawnTimer());
         gameTimer = setTimeout(() => {
             if (Array.isArray(gameState)) {
                 const s = win.dlMaxAvail(gameState);
-                dlContent.appendChild(document.createTextNode(`\n\nRéponses : ${s.join(', ')}`));
+                dlContent.appendChild(generateAnswer(`${s.join(', ')}`));
             }
         }, 30000);
     }
-
 
     dlVowel.addEventListener('click', drawLetter.bind(null, 'vowel'), false);
     dlConsonant.addEventListener('click', drawLetter.bind(null, 'consonant'), false);
