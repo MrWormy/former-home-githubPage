@@ -1,6 +1,7 @@
 (function(win, document){
     // Display logic
     let gameTimer;
+    let dcSol;
     let gameState;
     let gameContent;
 
@@ -10,6 +11,10 @@
         if (gameTimer) {
             clearTimeout(gameTimer);
             gameTimer = null;
+        }
+        if (dcSol) {
+            clearTimeout(dcSol);
+            dcSol = null;
         }
         if (gameContent) {
             while ((child = gameContent.firstChild) !== null) {
@@ -68,7 +73,7 @@
      </div>
      */
 
-    function spawnTimer() {
+    function spawnTimer(timerStartCb = null) {
         const timer = document.createElement('div');
         const staticBack = document.createElement('div');
         const movingBack = document.createElement('div');
@@ -78,6 +83,8 @@
         staticBack.className = 'static-back-horloge';
         movingBack.className = 'back-horloge';
         hidingFront.className = 'front-horloge';
+
+        if (timerStartCb) movingBack.addEventListener('animationstart', timerStartCb, {once: true});
 
         timer.appendChild(staticBack);
         timer.appendChild(movingBack);
@@ -99,16 +106,25 @@
         for(const num of g.draw) {
             draw.appendChild(generateTile(num));
         }
-        draw.appendChild(generateTile('►'));
-        draw.appendChild(generateTile(g.target));
-        draw.appendChild(spawnTimer());
+        draw.appendChild(document.createElement('br'));
+        draw.appendChild(document.createElement('br'));
+        const draw2 = generateDraw();
+        draw2.appendChild(generateTile('+'));
+        draw2.appendChild(generateTile('−'));
+        draw2.appendChild(generateTile('×'));
+        draw2.appendChild(generateTile('÷'));
+        draw2.appendChild(generateTile('')); //►
+        draw2.appendChild(generateTile(g.target));
+        draw2.appendChild(spawnTimer(() => {
+            gameTimer = setTimeout(() => {
+                dcContent.appendChild(generateAnswer(`${s.solution}`));
+            }, 30000);
+            dcSol = setTimeout(() => {
+                s = win.dcSolve(g);
+            }, 5000)
+        }));
         dcContent.appendChild(draw);
-        gameTimer = setTimeout(() => {
-            dcContent.appendChild(generateAnswer(`${s.solution}`));
-        }, 30000);
-        setTimeout(() => {
-            s = win.dcSolve(g);
-        }, 40);
+        dcContent.appendChild(draw2);
     }
 
     dcLaunch.addEventListener('click', startDC, false);
@@ -153,13 +169,14 @@
 
     function startDL() {
         clearTimeout(gameTimer);
-        dlContent.firstChild.appendChild(spawnTimer());
-        gameTimer = setTimeout(() => {
-            if (Array.isArray(gameState)) {
-                const s = win.dlMaxAvail(gameState);
-                dlContent.appendChild(generateAnswer(`${s.join(', ')}`));
-            }
-        }, 30000);
+        dlContent.firstChild.appendChild(spawnTimer(() => {
+            gameTimer = setTimeout(() => {
+                if (Array.isArray(gameState)) {
+                    const s = win.dlMaxAvail(gameState);
+                    dlContent.appendChild(generateAnswer(`${s.join(', ')}`));
+                }
+            }, 30000);
+        }));
     }
 
     dlVowel.addEventListener('click', drawLetter.bind(null, 'vowel'), false);

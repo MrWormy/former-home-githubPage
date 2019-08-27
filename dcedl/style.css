@@ -20,7 +20,7 @@ body {
 
 .game-content {
     font-size: 9vmin;
-    min-height: 2em;
+    min-height: 2.1em;
     white-space: pre-line;
 }
 
@@ -31,8 +31,8 @@ body {
 
 .game-draw {
     display: flex;
-    align-items: center;
-    height: 1.7em;
+    flex-wrap: wrap;
+    align-items: center
 }
 
 .game-draw > span {
@@ -41,10 +41,11 @@ body {
     justify-content: center;
     position: relative;
     min-width: 1em;
+    height: 1.2em;
     padding: 0.25em 0.15em;
     background: #333;
     border-radius: 5px;
-    margin-right: 5px;
+    margin: 0 5px 8px 0;
     color: white;
     text-align: center;
 }
@@ -69,16 +70,21 @@ body {
     overflow: hidden;
     box-sizing: border-box;
     border: 4px solid black;
+    /*noinspection CssInvalidPropertyValue*/
+    -webkit-mask-image: -webkit-radial-gradient(white, black);
     animation: blacked 30s step-end 0s 1 normal forwards running;
 }
 
 .front-horloge {
     position: absolute;
-    z-index: 2;
+    visibility: visible;
+    z-index: 3;
     width: 50%;
     height: 100%;
+    border-top-left-radius: 100% 50%;
+    border-bottom-left-radius: 100% 50%;
     background-color: white;
-    animation: blacked 30s step-end 0s 1 normal forwards running;
+    animation: despawn 15s step-end 0s 1 normal forwards running;
 }
 
 .static-back-horloge {
@@ -95,24 +101,19 @@ body {
 
 .back-horloge {
     position: absolute;
+    z-index: 2;
     width: 150%;
     height: 150%;
     left: -100%;
     top: -25%;
     background-color: black;
     transform-origin: right center;
+    will-change: transform;
     animation: rotate 30s linear 0s 1 normal forwards running;
 }
 
 @keyframes rotate {
-    from {
-        z-index: 1;
-    }
-    50% {
-        transform: rotate(180deg);
-    }
     to {
-        z-index: 4;
         transform: rotate(360deg);
     }
 }
@@ -120,6 +121,12 @@ body {
 @keyframes spawn {
     to {
         visibility: visible;
+    }
+}
+
+@keyframes despawn {
+    to {
+        visibility: hidden;
     }
 }
 
