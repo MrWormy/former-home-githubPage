@@ -4,10 +4,15 @@
     let dcSol;
     let gameState;
     let gameContent;
+    let timerElement;
 
     function clearGame() {
         let child;
         gameState = null;
+        if (timerElement) {
+            timerElement.className = '';
+            timerElement = null;
+        }
         if (gameTimer) {
             clearTimeout(gameTimer);
             gameTimer = null;
@@ -26,7 +31,7 @@
     function hideContentButOne(type) {
         const contents = document.querySelectorAll('.content');
         Array.from(contents).forEach((content) => {
-            if (content.id === type) content.className = content.className.replace(/dsp-[^\s]*/, 'dsp-bck');
+            if (content.id === type) content.className = content.className.replace(/dsp-[^\s]*/, 'dsp-flx');
             else content.className = content.className.replace(/dsp-[^\s]*/, 'dsp-hdn');
         });
     }
@@ -42,11 +47,19 @@
     });
 
     // Games logic
+    function tileClick(e) {
+        if (gameTimer) {
+            e.target.style.backgroundColor = '#aaa';
+        }
+    }
+
     function generateTile(str) {
         const sp = document.createElement('span');
         const text = document.createTextNode(String(str).toUpperCase());
 
         sp.appendChild(text);
+        sp.addEventListener('mousedown', tileClick, false);
+        sp.addEventListener('touchdown', tileClick, false);
         return sp;
     }
 
@@ -73,8 +86,13 @@
      </div>
      */
 
-    function spawnTimer(timerStartCb = null) {
-        const timer = document.createElement('div');
+    function spawnTimer(timerEl, timerStartCb = null) {
+        if (timerEl) {
+            timerElement = timerEl;
+            if (timerStartCb) timerElement.addEventListener('animationstart', timerStartCb, {once: true});
+            timerElement.className = 'timer';
+        }
+        /*const timer = document.createElement('div');
         const staticBack = document.createElement('div');
         const movingBack = document.createElement('div');
         const hidingFront = document.createElement('div');
@@ -90,12 +108,13 @@
         timer.appendChild(movingBack);
         timer.appendChild(hidingFront);
 
-        return timer;
+        return timer;*/
     }
 
     // dc
     const dcLaunch = document.getElementById('dc-launch');
     const dcContent = document.getElementById('dc-content');
+    const dcTimer = document.getElementById('dc-timer');
 
     function startDC() {
         let s;
@@ -106,8 +125,6 @@
         for(const num of g.draw) {
             draw.appendChild(generateTile(num));
         }
-        draw.appendChild(document.createElement('br'));
-        draw.appendChild(document.createElement('br'));
         const draw2 = generateDraw();
         draw2.appendChild(generateTile('+'));
         draw2.appendChild(generateTile('−'));
@@ -115,14 +132,14 @@
         draw2.appendChild(generateTile('÷'));
         draw2.appendChild(generateTile('')); //►
         draw2.appendChild(generateTile(g.target));
-        draw2.appendChild(spawnTimer(() => {
+        spawnTimer(dcTimer, () => {
             gameTimer = setTimeout(() => {
                 dcContent.appendChild(generateAnswer(`${s.solution}`));
             }, 30000);
             dcSol = setTimeout(() => {
                 s = win.dcSolve(g);
             }, 5000)
-        }));
+        });
         dcContent.appendChild(draw);
         dcContent.appendChild(draw2);
     }
@@ -134,6 +151,7 @@
     const dlVowel = document.getElementById('dl-vowel');
     const dlConsonant = document.getElementById('dl-consonant');
     const dlContent = document.getElementById('dl-content');
+    const dlTimer = document.getElementById('dl-timer');
 
     function drawLetter(type) {
         gameContent = dlContent;
@@ -169,14 +187,16 @@
 
     function startDL() {
         clearTimeout(gameTimer);
-        dlContent.firstChild.appendChild(spawnTimer(() => {
+        spawnTimer(dlTimer, () => {
             gameTimer = setTimeout(() => {
                 if (Array.isArray(gameState)) {
                     const s = win.dlMaxAvail(gameState);
                     dlContent.appendChild(generateAnswer(`${s.join(', ')}`));
+                    clearTimeout(gameTimer);
+                    gameTimer = null;
                 }
             }, 30000);
-        }));
+        });
     }
 
     dlVowel.addEventListener('click', drawLetter.bind(null, 'vowel'), false);

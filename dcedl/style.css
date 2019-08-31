@@ -1,26 +1,56 @@
 html {
     font-family: "Proxima Nova Soft", "Helvetica Neue", sans-serif;
+    font-size: 5vmax;
+    background-color: #e6e5e8;
 }
 
-body {
-
+button {
+    user-select: none;
 }
 
-.dsp-bck {
-    display: block;
+button:focus {
+    outline: 0;
+}
+
+.dsp-flx {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .dsp-hdn {
     display: none;
 }
 
+.dsp-flx > * {
+    flex: 1 100%;
+}
+
+.dsp-flx > button {
+    min-height: 2em;
+    flex: 1;
+    border-radius: 5px;
+    border-color: cadetblue;
+    background-color: cadetblue;
+}
+
+.dsp-flx > h1,h2 {
+    text-align: center;
+    margin-top: 0;
+    padding: 0.5em;
+    background-color: #96daff;
+}
+.dsp-flx > h2 {
+    margin-bottom: 0;
+}
+
 .content, .content > button {
-    font-size: 5vmin;
+    font-size: 5vmax;
 }
 
 .game-content {
-    font-size: 9vmin;
-    min-height: 2.1em;
+    font-size: 6.6vmax;
+    min-height: 2.25em;
     white-space: pre-line;
 }
 
@@ -30,6 +60,7 @@ body {
 }
 
 .game-draw {
+    padding: 0.2em 0;
     display: flex;
     flex-wrap: wrap;
     align-items: center
@@ -41,13 +72,14 @@ body {
     justify-content: center;
     position: relative;
     min-width: 1em;
-    height: 1.2em;
+    cursor: pointer;
+    /*height: 1.2em;*/
     padding: 0.25em 0.15em;
     background: #333;
     border-radius: 5px;
-    margin: 0 5px 8px 0;
+    margin: 0.1em 0.15em 0.1em 0;
     color: white;
-    text-align: center;
+    user-select: none;
 }
 
 /*.game-draw > span::after {
@@ -61,6 +93,16 @@ body {
 
 
 /* timer mechanism */
+h2  {
+    will-change: background-position;
+}
+
+.timer {
+    background: linear-gradient(to right, #9595f0 50%, #96daff 50%);
+    background-size: 200% 200%;
+    animation: slide 30s linear 0s 1 normal forwards running;
+}
+
 .horloge {
     display: inline-block;
     position: relative;
@@ -83,7 +125,7 @@ body {
     height: 100%;
     border-top-left-radius: 100% 50%;
     border-bottom-left-radius: 100% 50%;
-    background-color: white;
+    background-color: #e6e5e8;
     animation: despawn 15s step-end 0s 1 normal forwards running;
 }
 
@@ -136,5 +178,16 @@ body {
     }
 }
 
+@keyframes slide {
+    from {
+        background-position:100% 50%
+    }
+    50% {
+        background-position:50% 50%
+    }
+    to {
+        background-position:0 50%
+    }
+}
 
 
